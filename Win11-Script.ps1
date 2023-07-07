@@ -339,8 +339,8 @@ Function EnableNumpad {
     {
     'y' { 		
     		$val = Get-ItemPropertyValue -Path 'REGISTRY::HKEY_USERS\.DEFAULT\Control Panel\Keyboard' -Name InitialKeyboardIndicators
-      		$val +=2
-		Set-ItemProperty -Path "REGISTRY::HKEY_USERS\.DEFAULT\Control Panel\Keyboard" -Name "InitialKeyboardIndicators" -Type String -Value $val
+      		
+		Set-ItemProperty -Path "REGISTRY::HKEY_USERS\.DEFAULT\Control Panel\Keyboard" -Name "InitialKeyboardIndicators" -Type String -Value 2147483650
 	}
     'n' { Break }
     #'q' { Exit  }
