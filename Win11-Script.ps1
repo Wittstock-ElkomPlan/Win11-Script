@@ -5,30 +5,31 @@ $tweaks = @(
 	### Require administrator privileges ###
 	"RequireAdmin",
 	"EnableNumpad",
-    ### Security Tweaks ###
+ 
+    	### Security Tweaks ###
 	"SetUACLow",                  # "SetUACHigh",
-    "DisableSMB1",                # "EnableSMB1",	
+    	"DisableSMB1",                # "EnableSMB1",	
 	"SetCurrentNetworkPrivate",     # "SetCurrentNetworkPublic",	
 	"EnableF8BootMenu",             # "DisableF8BootMenu",
     
     
-    ### Explorer UI Tweaks ###
+    	### Explorer UI Tweaks ###
 	"ShowKnownExtensions",          # "HideKnownExtensions",
-    "ShowThisPCOnDesktop", #"HideThisPCFromDesktop",
+    	"ShowThisPCOnDesktop", #"HideThisPCFromDesktop",
 	"ShowUserFolderOnDesktop",    # "HideUserFolderFromDesktop",
     
-    "UninstallXPSPrinter",          # "InstallXPSPrinter",
+    	"UninstallXPSPrinter",          # "InstallXPSPrinter",
 	"RemoveFaxPrinter",             # "AddFaxPrinter",
     
-    ### External Program Setup
+    	### External Program Setup
 	"InstallTitusProgs", #REQUIRED FOR OTHER PROGRAM INSTALLS!
     
-    "InstallAdobe",
+    	"InstallAdobe",
 	#"InstallOpenShell",
 	"InstallFirefox",
 	"InstallVLC",
 	"InstallWinrar",
-	"InstallTotalcommander",
+	#"InstallTotalcommander",
 	"InstallRemoteTools",
 		
 	## Elkom
@@ -45,8 +46,14 @@ $tweaks = @(
 	"EnableNetFx3",
 	"ChangeDriveLabelC",
 	"DisableOffice365SimplifiedAccountCreation"
+ 
+ 	### Auxiliary Functions ###	
+	"WaitForKey",
+	"Restart"
     
     )
+
+    
 ##########
 # Auxiliary Functions
 ##########
@@ -330,8 +337,10 @@ Function EnableNumpad {
     $selection = Read-Host "Please make a selection"
     switch ($selection)
     {
-    'y' { 		 	
-		Set-ItemProperty -Path "REGISTRY::HKEY_USERS\.DEFAULT\Control Panel\Keyboard" -Name "InitialKeyboardIndicators" -Type String -Value 2147483650
+    'y' { 		
+    		$val = Get-ItemPropertyValue -Path 'REGISTRY::HKEY_USERS\.DEFAULT\Control Panel\Keyboard' -Name InitialKeyboardIndicators
+      		$val +=2
+		Set-ItemProperty -Path "REGISTRY::HKEY_USERS\.DEFAULT\Control Panel\Keyboard" -Name "InitialKeyboardIndicators" -Type String -Value $val
 	}
     'n' { Break }
     #'q' { Exit  }
