@@ -33,6 +33,7 @@ $tweaks = @(
 	"InstallRemoteTools",
 		
 	## Elkom
+ 	"AlignTaskbarLeft",
 	"DisableTaskbarGrouping",
 	"ShowAllIconsInNotificationArea",
 	"HideTaskViewButton",
@@ -256,6 +257,16 @@ Function ShowKnownExtensions {
 Function HideKnownExtensions {
 	Write-Output "Hiding known file extensions..."
 	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWord -Value 1
+}
+
+Function AlignTaskbarLeft {
+	Write-Output "AlignTaskbarLeft..."
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAI" -Type DWord -Value 0 	
+}
+
+Function AlignTaskbarCenter {
+	Write-Output "AlignTaskbarLeft..."
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAI" -Type DWord -Value 1 	
 }
 
 Function DisableTaskbarGrouping {
