@@ -46,7 +46,8 @@ $tweaks = @(
 	"Netzwerkverbindungen",
 	"EnableNetFx3",
 	"ChangeDriveLabelC",
-	"DisableOffice365SimplifiedAccountCreation"
+	"DisableOffice365SimplifiedAccountCreation",
+ 	"GetBitLockerStatus"
  
  	### Auxiliary Functions ###	
 	"WaitForKey",
@@ -163,6 +164,30 @@ Function InstallRemoteTools {
 ##########
 # Security Tweaks
 ##########
+
+# Get Bitlocker Status
+Function GetBitLockerStatus {
+	# Get BitLocker volume information
+	$bitlockerVolume = Get-BitLockerVolume -MountPoint C
+
+	# Check if VolumeStatus is anything other than "FullyDecrypted"
+	if ($bitlockerVolume.VolumeStatus -ne "FullyDecrypted") {
+    		# Display a warning in red
+    		Write-Host "Warning: BitLocker status enabled" -ForegroundColor Red
+    
+    		# Get the KeyProtector
+    		$keyProtector = $bitlockerVolume.KeyProtector
+    
+    		# Display the KeyProtector value
+    		Write-Host "KeyProtector: $keyProtector"
+    
+    		# Get the current user's desktop path
+    		$desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "RecoveryKey.txt")
+    
+    		# Save the KeyProtector value to a text file on the desktop
+    		$keyProtector | Out-File -FilePath $desktopPath
+	}
+}
 
 # Lower UAC level (disabling it completely would break apps)
 Function SetUACLow {
