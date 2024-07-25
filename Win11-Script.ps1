@@ -47,7 +47,7 @@ $tweaks = @(
 	"EnableNetFx3",
 	"ChangeDriveLabelC",
 	"DisableOffice365SimplifiedAccountCreation",
- 	"GetBitLockerStatus"
+ 	"GetBitLockerStatus",
  
  	### Auxiliary Functions ###	
 	"WaitForKey",
