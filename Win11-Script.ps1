@@ -47,6 +47,7 @@ $tweaks = @(
 	"EnableNetFx3",
 	"ChangeDriveLabelC",
 	"DisableOffice365SimplifiedAccountCreation",
+ 	"HideNewOutlookToggle",
  	"GetBitLockerStatus",
  
  	### Auxiliary Functions ###	
@@ -437,7 +438,6 @@ Function AddFaxPrinter {
 	Add-Printer -Name "Fax" -DriverName "Microsoft Shared Fax Driver" -PortName "SHRFAX:" -ErrorAction SilentlyContinue
 }
 
-
 Function DisableOffice365SimplifiedAccountCreation {
 	Write-Output "Disable Office 365 Simplified Account Creation..."
 	$keypath = "HKCU:\SOFTWARE\Microsoft\Office\16.0\Outlook\setup"
@@ -457,6 +457,15 @@ Function DisableOffice365SimplifiedAccountCreation {
  		New-Item -Path $keypath -ItemType Key -Force
 	}
 	Set-ItemProperty -Path $keypath -Name "ExcludeExplicitO365Endpoint" -Type DWord -Value 0 -Force
+}
+
+Function HideNewOutlookToggle {
+	Write-Output "HideNewOutlookToggle..."
+	$keypath = "HKCU:\Software\Microsoft\Office\16.0\Outlook\Options\General"
+	if (-not (Test-Path $keypath)){
+		New-Item -Path $keypath -ItemType Key -Force
+	}
+	Set-ItemProperty -Path $keypath -Name "HideNewOutlookToggle" -Type DWord -Value 1 -Force
 }
 
 Function CreateRestorePoint {
