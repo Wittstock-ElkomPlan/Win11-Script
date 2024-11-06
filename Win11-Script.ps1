@@ -48,6 +48,7 @@ $tweaks = @(
 	"ChangeDriveLabelC",
 	"DisableOffice365SimplifiedAccountCreation",
  	"DisablePreInstalledApps",
+  	"DisableInfosOnLookScreen",
  	"HideNewOutlookToggle",
  	"GetBitLockerStatus",
  
@@ -467,8 +468,15 @@ Function DisablePreInstalledApps {
 	}
 	Set-ItemProperty -Path $keypath -Name "OemPreInstalledAppsEnabled" -Type DWord -Value 0 -Force
  	Set-ItemProperty -Path $keypath -Name "PreInstalledAppsEnabled" -Type DWord -Value 0 -Force
-  	Set-ItemProperty -Path $keypath -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0 -Force
-	Set-ItemProperty -Path $keypath -Name "SubscribedContent-338387Enabled" -Type DWord -Value 0 -Force
+  	Set-ItemProperty -Path $keypath -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0 -Force	
+}
+
+Function DisableInfosOnLookScreen {	
+	$keypath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+	if (-not (Test-Path $keypath)){
+		New-Item -Path $keypath -ItemType Key -Force
+	}
+ 	Set-ItemProperty -Path $keypath -Name "SubscribedContent-338387Enabled" -Type DWord -Value 0 -Force
 }
 
 Function HideNewOutlookToggle {
