@@ -99,7 +99,7 @@ Function InstallTitusProgs {
 		{
       		New-Item -ItemType Directory -Force -Path $path
 		}	
-	Start-BitsTransfer -Source "https://raw.githubusercontent.com/ChrisTitusTech/win10script/master/ooshutup10.cfg" -Destination C:\_Programme\ooshutup10.cfg
+	Start-BitsTransfer -Source "https://github.com/Wittstock-ElkomPlan/Win11-Script/raw/refs/heads/main/ooshutup10_mod.cfg" -Destination C:\_Programme\ooshutup10.cfg
 	Start-BitsTransfer -Source "https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe" -Destination C:\_Programme\OOSU10.exe
 	Start-Process -FilePath "C:\_Programme\OOSU10.exe" -ArgumentList "C:\_Programme\ooshutup10.cfg /quiet"
 
