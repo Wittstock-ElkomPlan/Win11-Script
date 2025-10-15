@@ -446,13 +446,13 @@ Function DisableOffice365SimplifiedAccountCreation {
 	if (-not (Test-Path $keypath)){
 		New-Item -Path $keypath -ItemType Key -Force
 	}
-	Set-ItemProperty -Path $keypath -Name "DisableOffice365SimplifiedAccountCreation" -Type DWord -Value 1 -Force
+	Set-ItemProperty -Path $keypath -Name "DisableOffice365SimplifiedAccountCreation" -Type DWord -Value 0 -Force
 
 	$keypath = "HKCU:\SOFTWARE\Policies\Microsoft\Office\16.0\Outlook\setup"
 	if (-not (Test-Path $keypath)){ 
  		New-Item -Path $keypath -ItemType Key -Force
 	}
-	Set-ItemProperty -Path $keypath -Name "DisableOffice365SimplifiedAccountCreation" -Type DWord -Value 1 -Force
+	Set-ItemProperty -Path $keypath -Name "DisableOffice365SimplifiedAccountCreation" -Type DWord -Value 0 -Force
 	
 	$keypath = "HKCU:\Software\Microsoft\Office\16.0\Outlook\AutoDiscover"
 	if (-not (Test-Path $keypath)){ 
@@ -516,3 +516,4 @@ If ($args) {
 
 # Call the desired tweak functions
 $tweaks | ForEach { Invoke-Expression $_ }
+
