@@ -5,6 +5,7 @@ $tweaks = @(
 	### Require administrator privileges ###
 	"RequireAdmin",
 	"EnableNumpad",
+	"GetBitLockerStatus",
  
     	### Security Tweaks ###
 	"SetUACLow",                  # "SetUACHigh",
@@ -51,7 +52,7 @@ $tweaks = @(
   	"DisableInfosOnLookScreen",
  	"HideNewOutlookToggle",
 	"DisableNewsFeedAndWidgetsPanel",
- 	"GetBitLockerStatus",
+ 	
  
  	### Auxiliary Functions ###	
 	"WaitForKey",
@@ -619,6 +620,7 @@ If ($args) {
 
 # Call the desired tweak functions
 $tweaks | ForEach { Invoke-Expression $_ }
+
 
 
 
