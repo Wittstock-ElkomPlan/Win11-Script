@@ -84,6 +84,49 @@ Function Restart {
 	Restart-Computer
 }
 
+function Wait-ForDecryption {
+    param(
+        [string]$MountPoint = "C:",
+        [int]$PollIntervalSeconds = 15,
+        [int]$MaxWaitHours = 24
+    )
+
+    $endTime = (Get-Date).AddHours($MaxWaitHours)
+    Write-Host "Warte auf vollständige Entschlüsselung von $MountPoint (max ${MaxWaitHours}h)..." -ForegroundColor Cyan
+
+    while ($true) {
+        $info = Get-BitLockerVolume -MountPoint $MountPoint
+
+        if ($null -eq $info) {
+            Write-Host "Fehler beim Lesen des BitLocker-Status für $MountPoint." -ForegroundColor Red
+            return $false
+        }
+
+        $status = $info.VolumeStatus
+        $percent = $info.EncryptionPercentage
+
+        $timeStamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+        Write-Host "$timeStamp - Status: $status - EncryptionPercentage: $percent`%" -NoNewline
+
+        # Wenn vollständig entschlüsselt -> fertig
+        if ($status -eq "FullyDecrypted" -or $percent -eq 0) {
+            Write-Host "  <-- Fertig" -ForegroundColor Green
+            return $true
+        }
+        else {
+            Write-Host ""
+        }
+
+        # Timeout prüfen
+        if ((Get-Date) -ge $endTime) {
+            Write-Host "Timeout erreicht ($MaxWaitHours Stunden). Entschlüsselung ist noch nicht abgeschlossen." -ForegroundColor Yellow
+            return $false
+        }
+
+        Start-Sleep -Seconds $PollIntervalSeconds
+    }
+}
+
     
 #########
 # Recommended Titus Programs
@@ -214,8 +257,14 @@ Function GetBitLockerStatus {
                 '2' {
                     Write-Host "`nDecrypting drive C: ... this may take a while." -ForegroundColor Yellow
                     Disable-BitLocker -MountPoint "C:" | Out-Null
-                    Write-Host "BitLocker decryption started. You can monitor progress with:" -ForegroundColor Green
-                    Write-Host "Get-BitLockerVolume -MountPoint C | Select-Object VolumeStatus,EncryptionPercentage" -ForegroundColor Gray
+                    $finished = Wait-ForDecryption -MountPoint "C:" -PollIntervalSeconds 10 -MaxWaitHours 20
+
+                	if ($finished) {
+                    	Write-Host "Entschlüsselung abgeschlossen." -ForegroundColor Green					
+	                }
+	                else {
+	                    Write-Warning "Entschlüsselung nicht innerhalb des Zeitlimits abgeschlossen. Bitte prüfen bevor du neu startest."
+	                }
                 }
                 Default {
                     Write-Host "`nOperation cancelled." -ForegroundColor Gray
@@ -570,6 +619,7 @@ If ($args) {
 
 # Call the desired tweak functions
 $tweaks | ForEach { Invoke-Expression $_ }
+
 
 
 
