@@ -172,25 +172,69 @@ Function InstallRemoteTools {
 # Get Bitlocker Status
 Function GetBitLockerStatus {
 	# Get BitLocker volume information
-	$bitlockerVolume = Get-BitLockerVolume -MountPoint C
+    $bitlockerVolume = Get-BitLockerVolume -MountPoint C
 
-	# Check if VolumeStatus is anything other than "FullyDecrypted"
-	if ($bitlockerVolume.VolumeStatus -ne "FullyDecrypted") {
-    		# Display a warning in red
-    		Write-Host "Warning: BitLocker status enabled" -ForegroundColor Red
-    
-    		# Get the KeyProtector
-    		$keyProtector = $bitlockerVolume.KeyProtector
-    
-    		# Display the KeyProtector value
-    		Write-Host "KeyProtector: $keyProtector"
-    
-    		# Get the current user's desktop path
-    		$desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "RecoveryKey.txt")
-    
-    		# Save the KeyProtector value to a text file on the desktop
-    		$keyProtector | Out-File -FilePath $desktopPath
-	}
+    # Check if VolumeStatus is anything other than "FullyDecrypted"
+    if ($bitlockerVolume.VolumeStatus -ne "FullyDecrypted") {
+        # Display a warning in red
+        Write-Host "Warning: BitLocker or device encryption detected on drive C:" -ForegroundColor Red
+
+        # Get the KeyProtectors (can be multiple)
+        $keyProtector = $bitlockerVolume.KeyProtector
+
+        if (-not $keyProtector) {
+            Write-Host "`nNo KeyProtector (recovery key) found for this volume!" -ForegroundColor Yellow
+
+            # Ask user what to do
+            Write-Host "`nChoose an action:" -ForegroundColor Cyan
+            Write-Host "1 - Create and export a new BitLocker Recovery Password"
+            Write-Host "2 - Decrypt the drive (Disable BitLocker)"
+            Write-Host "3 - Cancel" -ForegroundColor DarkGray
+
+            $choice = Read-Host "Enter your choice (1, 2, or 3)"
+
+            switch ($choice) {
+                '1' {
+                    Write-Host "`nGenerating new BitLocker Recovery Password..." -ForegroundColor Cyan
+                    # Create new Recovery Password protector
+                    manage-bde -protectors -add C: -RecoveryPassword | Out-Null
+
+                    # Refresh BitLocker info to get new protector
+                    $bitlockerVolume = Get-BitLockerVolume -MountPoint C
+                    $keyProtector = $bitlockerVolume.KeyProtector
+
+                    # Export all protector info to Desktop
+                    $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "RecoveryKey.txt")
+
+                    Write-Host "Saving Recovery Key information to: $desktopPath" -ForegroundColor Green
+                    $keyProtector | Out-File -FilePath $desktopPath -Encoding UTF8
+
+                    Write-Host "`nRecovery Key successfully created and saved." -ForegroundColor Green
+                }
+                '2' {
+                    Write-Host "`nDecrypting drive C: ... this may take a while." -ForegroundColor Yellow
+                    Disable-BitLocker -MountPoint "C:" | Out-Null
+                    Write-Host "BitLocker decryption started. You can monitor progress with:" -ForegroundColor Green
+                    Write-Host "Get-BitLockerVolume -MountPoint C | Select-Object VolumeStatus,EncryptionPercentage" -ForegroundColor Gray
+                }
+                Default {
+                    Write-Host "`nOperation cancelled." -ForegroundColor Gray
+                }
+            }
+        }
+        else {
+            # Key protector(s) exist → export them
+            Write-Host "`nExisting BitLocker protectors found, exporting..." -ForegroundColor Cyan
+
+            $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "RecoveryKey.txt")
+
+            $keyProtector | Out-File -FilePath $desktopPath -Encoding UTF8
+            Write-Host "KeyProtector information saved to: $desktopPath" -ForegroundColor Green
+        }
+    }
+    else {
+        Write-Host "BitLocker not active (volume fully decrypted)." -ForegroundColor Green
+    }
 }
 
 # Lower UAC level (disabling it completely would break apps)
@@ -526,5 +570,6 @@ If ($args) {
 
 # Call the desired tweak functions
 $tweaks | ForEach { Invoke-Expression $_ }
+
 
 
