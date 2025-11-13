@@ -50,6 +50,7 @@ $tweaks = @(
  	"DisablePreInstalledApps",
   	"DisableInfosOnLookScreen",
  	"HideNewOutlookToggle",
+	"DisableNewsFeedAndWidgetsPanel",
  	"GetBitLockerStatus",
  
  	### Auxiliary Functions ###	
@@ -488,6 +489,15 @@ Function HideNewOutlookToggle {
 	Set-ItemProperty -Path $keypath -Name "HideNewOutlookToggle" -Type DWord -Value 1 -Force
 }
 
+Function DisableNewsFeedAndWidgetsPanel {
+	Write-Output "DisableNewsFeedAndWidgetsPanel..."
+	$keypath = "HKLM:\SOFTWARE\Policies\Microsoft\Dsh"
+	if (-not (Test-Path $keypath)){
+		New-Item -Path $keypath -ItemType Key -Force
+	}
+	Set-ItemProperty -Path $keypath -Name "AllowNewsAndInterests" -Type DWord -Value 0 -Force
+}
+
 Function CreateRestorePoint {
   	Write-Output "Creating Restore Point incase something bad happens"
   	Enable-ComputerRestore -Drive "C:\"
@@ -516,4 +526,5 @@ If ($args) {
 
 # Call the desired tweak functions
 $tweaks | ForEach { Invoke-Expression $_ }
+
 
