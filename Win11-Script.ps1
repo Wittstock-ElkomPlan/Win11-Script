@@ -334,12 +334,12 @@ Function HideKnownExtensions {
 
 Function AlignTaskbarLeft {
 	Write-Output "AlignTaskbarLeft..."
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAI" -Type DWord -Value 0 	
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Type DWord -Value 0
 }
 
 Function AlignTaskbarCenter {
-	Write-Output "AlignTaskbarLeft..."
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAI" -Type DWord -Value 1 	
+	Write-Output "AlignTaskbarCenter..."
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Type DWord -Value 1 	
 }
 
 Function DisableTaskbarGrouping {
@@ -570,6 +570,7 @@ If ($args) {
 
 # Call the desired tweak functions
 $tweaks | ForEach { Invoke-Expression $_ }
+
 
 
 
