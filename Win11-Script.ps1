@@ -417,6 +417,17 @@ Function HideSearchBoxinTaskbar {
 	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Type DWord -Value 0 	
 }
 
+# Beim ziehen eines Fensters an den oberen Bildschirmrand Andocklayouts anzeigen
+Function DisableSnapBar {
+	Write-Output "DisableSnapBar..."
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "SnapBar" -Type DWord -Value 0	
+}
+
+# Beim Andocken eines Fensters vorschlagen was daneben positioniert werden kann
+Function DisableSnapAssist {
+	Write-Output "DisableSnapAssist..."
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "SnapAssist" -Type DWord -Value 0	
+}
 
 Function DisableAutostartOneDrive {
 	Write-Output "DisableAutostartOneDrive..."
@@ -620,6 +631,7 @@ If ($args) {
 
 # Call the desired tweak functions
 $tweaks | ForEach { Invoke-Expression $_ }
+
 
 
 
