@@ -52,7 +52,7 @@ $tweaks = @(
   	"DisableInfosOnLookScreen",
  	"HideNewOutlookToggle",
 	"DisableNewsFeedAndWidgetsPanel",
- 	
+ 	"RedirectionWarningDialogVersion",
  
  	### Auxiliary Functions ###	
 	"WaitForKey",
@@ -583,6 +583,14 @@ Function DisableInfosOnLookScreen {
 		New-Item -Path $keypath -ItemType Key -Force
 	}
  	Set-ItemProperty -Path $keypath -Name "SubscribedContent-338387Enabled" -Type DWord -Value 0 -Force
+}
+
+Function RedirectionWarningDialogVersion {	
+	$keypath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\Client"
+	if (-not (Test-Path $keypath)){
+		New-Item -Path $keypath -ItemType Key -Force
+	}
+ 	Set-ItemProperty -Path $keypath -Name "RedirectionWarningDialogVersion" -Type DWord -Value 1 -Force
 }
 
 Function HideNewOutlookToggle {
