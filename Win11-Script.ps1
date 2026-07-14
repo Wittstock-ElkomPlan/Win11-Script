@@ -1,31 +1,38 @@
- Default preset
+#Default preset
 $tweaks = @(
-	#"AskQuestions",
-	"CreateRestorePoint",
+	
+    ### Explorer UI Tweaks ###
+	"ShowKnownExtensions",          # "HideKnownExtensions",
+    "ShowThisPCOnDesktop", 			#"HideThisPCFromDesktop",
+	"ShowUserFolderOnDesktop",    	# "HideUserFolderFromDesktop",
+
+	## Elkom ohne Adminrechte
+	"AlignTaskbarLeft",
+	"DisableTaskbarGrouping",
+	"HideTaskViewButton",
+	"HideCortanaButton",
+	"HideSearchBoxinTaskbar",
+ 	"DisablePreInstalledApps",
+  	"DisableInfosOnLookScreen",
+ 	"HideNewOutlookToggle",
+
 	### Require administrator privileges ###
 	"RequireAdmin",
+	"CreateRestorePoint",
 	"EnableNumpad",
 	"GetBitLockerStatus",
  
     	### Security Tweaks ###
 	"SetUACLow",                  # "SetUACHigh",
-    	"DisableSMB1",                # "EnableSMB1",	
+    "DisableSMB1",                # "EnableSMB1",	
 	"SetCurrentNetworkPrivate",     # "SetCurrentNetworkPublic",	
 	"EnableF8BootMenu",             # "DisableF8BootMenu",
-    
-    
-    	### Explorer UI Tweaks ###
-	"ShowKnownExtensions",          # "HideKnownExtensions",
-    	"ShowThisPCOnDesktop", #"HideThisPCFromDesktop",
-	"ShowUserFolderOnDesktop",    # "HideUserFolderFromDesktop",
-    
-    	"UninstallXPSPrinter",          # "InstallXPSPrinter",
+    "UninstallXPSPrinter",          # "InstallXPSPrinter",
 	"RemoveFaxPrinter",             # "AddFaxPrinter",
     
     	### External Program Setup
 	"InstallTitusProgs", #REQUIRED FOR OTHER PROGRAM INSTALLS!
-    
-    	"InstallAdobe",
+    "InstallAdobe",
 	#"InstallOpenShell",
 	"InstallFirefox",
 	"InstallVLC",
@@ -34,11 +41,6 @@ $tweaks = @(
 	"InstallRemoteTools",
 		
 	## Elkom
- 	"AlignTaskbarLeft",
-	"DisableTaskbarGrouping",
-	"ShowAllIconsInNotificationArea",
-	"HideTaskViewButton",
-	"HideCortanaButton",
 	"DisableAutostartOneDrive",
 	"DisableAutostartSkype",
 	"DisableFastboot",
@@ -48,9 +50,6 @@ $tweaks = @(
 	"EnableNetFx3",
 	"ChangeDriveLabelC",
 	"DisableOffice365SimplifiedAccountCreation",
- 	"DisablePreInstalledApps",
-  	"DisableInfosOnLookScreen",
- 	"HideNewOutlookToggle",
 	"DisableNewsFeedAndWidgetsPanel",
  	"RedirectionWarningDialogVersion",
  
@@ -144,9 +143,10 @@ Function InstallTitusProgs {
 		{
       		New-Item -ItemType Directory -Force -Path $path
 		}	
-	Start-BitsTransfer -Source "https://github.com/Wittstock-ElkomPlan/Win11-Script/raw/refs/heads/main/ooshutup10_mod.cfg" -Destination C:\_Programme\ooshutup10.cfg
-	Start-BitsTransfer -Source "https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe" -Destination C:\_Programme\OOSU10.exe
+	Invoke-WebRequest -Uri "https://github.com/Wittstock-ElkomPlan/Win11-Script/raw/refs/heads/main/ooshutup10_mod.cfg" -OutFile "C:\_Programme\ooshutup10.cfg"	
+    	Invoke-WebRequest -Uri "https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe" -OutFile "C:\_Programme\OOSU10.exe"	
 	Start-Process -FilePath "C:\_Programme\OOSU10.exe" -ArgumentList "C:\_Programme\ooshutup10.cfg /quiet"
+
 
 }
 
@@ -173,7 +173,7 @@ Function InstallVLC {
 Function InstallWinrar {
 	Write-Output "Installing winrar"
 	choco install winrar -y	
-	Set-ItemProperty -Path "HKCU:\Software\WinRAR\Setup" -Name "CascadedMenu" -Type DWord -Value 1 
+	# Set-ItemProperty -Path "HKCU:\Software\WinRAR\Setup" -Name "CascadedMenu" -Type DWord -Value 1 
 }
 
 Function InstallTotalcommander {
@@ -354,7 +354,9 @@ Function ShowUserFolderOnDesktop {
 	Write-Output "Showing User Folder shortcut on desktop..."
 	If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
 		New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Force | Out-Null
+
 	}
+	New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\Balduin" -Force | Out-Null
 	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 0
 	If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel")) {
 		New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Force | Out-Null
@@ -639,10 +641,4 @@ If ($args) {
 
 # Call the desired tweak functions
 $tweaks | ForEach { Invoke-Expression $_ }
-
-
-
-
-
-
 
