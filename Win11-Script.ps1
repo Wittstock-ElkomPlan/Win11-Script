@@ -21,6 +21,7 @@ $tweaks = @(
 	"CreateRestorePoint",
 	"EnableNumpad",
 	"GetBitLockerStatus",
+	"SetWireguardLimitedOperatorUI",
  
     	### Security Tweaks ###
 	"SetUACLow",                  # "SetUACHigh",
@@ -328,6 +329,15 @@ Function SetCurrentNetworkPublic {
 ##########
 #
 ##########
+
+# SetWireguardLimitedOperatorUI
+Function SetWireguardLimitedOperatorUI {
+	Write-Output "Set WireguardLimitedOperatorUI Reg Key..."
+	If (!(Test-Path "HKLM:\SOFTWARE\WireGuard")) {
+		New-Item -Path "HKLM:\SOFTWARE\WireGuard" -Force | Out-Null
+	}
+	Set-ItemProperty -Path "HKLM:\SOFTWARE\WireGuard" -Name "LimitedOperatorUI" -Type DWord -Value 1
+}
 
 # Show This PC shortcut on desktop
 Function ShowThisPCOnDesktop {
